@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: libretranslate
-        image: 769215394510.dkr.ecr.us-west-2.amazonaws.com/libretranslate:4.0.41
+        image: 769215394510.dkr.ecr.us-west-2.amazonaws.com/libretranslate:{tag}
         resources:
           limits:
             memory: "2Gi"
