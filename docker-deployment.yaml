@@ -28,8 +28,11 @@ spec:
         image: 769215394510.dkr.ecr.us-west-2.amazonaws.com/libretranslate:{tag}
         resources:
           limits:
-            memory: "2Gi"
-            cpu: "1000m"
+            memory: "300Mi"
+            cpu: "500m"
+          requests:
+            memory: "5Gi"
+            cpu: "3000m"
         livenessProbe:
             httpGet:
                 scheme: HTTP
@@ -37,9 +40,9 @@ spec:
                 port: 5000
             initialDelaySeconds: 5
             periodSeconds: 10
-            timeoutSeconds: 3
+            timeoutSeconds: 5
             successThreshold: 1
-            failureThreshold: 2
+            failureThreshold: 3
         ports:
         - containerPort: 5000
         env:
