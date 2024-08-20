@@ -47,7 +47,6 @@ RUN apt-get update -qq \
 RUN addgroup --system --gid 1032 libretranslate && adduser --system --uid 1032 libretranslate && mkdir -p /home/libretranslate/.local && chown -R libretranslate:libretranslate /home/libretranslate/.local
 USER libretranslate
 
-COPY --from=builder --chown=1032:1032 /app /app
 WORKDIR /app
 
 RUN if [ "$with_models" = "true" ]; then  \
@@ -58,6 +57,8 @@ RUN if [ "$with_models" = "true" ]; then  \
   ./venv/bin/python scripts/install_models.py;  \
   fi \
   fi
+
+COPY --from=builder --chown=1032:1032 /app /app
 
 RUN (./venv/bin/libretranslate --port 1 || echo "Initiated")
 
