@@ -38,11 +38,11 @@ spec:
                 scheme: HTTP
                 path: /languages
                 port: 5000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 15
             successThreshold: 1
-            failureThreshold: 3
+            failureThreshold: 2
         ports:
         - containerPort: 5000
         env:
