@@ -27,10 +27,10 @@ spec:
       - name: libretranslate
         image: 769215394510.dkr.ecr.us-west-2.amazonaws.com/libretranslate:{tag}
         resources:
-          limits:
+          requests:
             memory: "300Mi"
             cpu: "500m"
-          requests:
+          limits:
             memory: "5Gi"
             cpu: "3000m"
         livenessProbe:
