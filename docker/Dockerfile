@@ -39,7 +39,7 @@ RUN if [ "$with_models" = "true" ]; then  \
   fi \
   fi
 
-RUN ./venv/bin/libretranslate --port 1 || true
+RUN (./venv/bin/libretranslate --port 1 || echo "Initiated")
 
 EXPOSE 5000
 ENTRYPOINT [ "./venv/bin/libretranslate", "--host", "0.0.0.0" ,"--api-keys", "true", "--disable-web-ui", "true"]
