@@ -40,7 +40,7 @@ spec:
                 port: 5000
             initialDelaySeconds: 10
             periodSeconds: 10
-            timeoutSeconds: 15
+            timeoutSeconds: 30
             successThreshold: 1
             failureThreshold: 2
         ports:
