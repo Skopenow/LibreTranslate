@@ -1,4 +1,4 @@
-#docker build -f CustomDockerfileLambda -t test . --progress=plain --build-arg with_models=true --build-arg models=en,ar && docker run --rm -p 9000:8080 test
+#docker build -f CustomDockerfileLambda -t test . --progress=plain --build-arg with_models=true --build-arg models=en,ar --build-arg with_rie=true && docker run --rm -p 9000:8080 test
 
 FROM public.ecr.aws/lambda/provided:al2023
 
