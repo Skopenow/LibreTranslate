@@ -40,7 +40,7 @@ ARG with_models=false
 ARG models=""
 
 RUN apt-get update -qq \
-  && apt-get -qqq install --no-install-recommends -y curl procps net-tools \
+  && apt-get -qqq install --no-install-recommends -y nano curl procps net-tools \
   && apt-get clean \
   && rm -rf /var/lib/apt
 
@@ -59,7 +59,7 @@ RUN if [ "$with_models" = "true" ]; then  \
   fi \
   fi
 
-RUN (./venv/bin/libretranslate --port 1 || echo "Initiated")
+RUN (./venv/bin/libretranslate --port 1 || echo "Initiated!")
 
 EXPOSE 5000
 ENTRYPOINT [ "./venv/bin/libretranslate", "--host", "0.0.0.0", "--disable-web-ui"]

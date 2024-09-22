@@ -1,0 +1,76 @@
+#Lambda base image Amazon linux https://aws.amazon.com/blogs/compute/building-php-lambda-functions-with-docker-container-images/
+FROM public.ecr.aws/lambda/provided:al2023 as builder
+
+
+WORKDIR /app
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN dnf update -y \
+  && dnf install -y pkg-config gcc g++ nano procps net-tools
+
+RUN dnf install -y python3 python3-devel
+
+RUN python -mvenv venv && ./venv/bin/pip install --no-cache-dir --upgrade pip
+
+COPY db db/
+COPY scripts scripts/
+COPY *.txt .
+COPY libretranslate libretranslate/
+COPY *.py .
+COPY *.toml .
+COPY *.cfg .
+COPY LICENSE .
+COPY VERSION .
+COPY *.sh .
+COPY *.bat .
+COPY *.md .
+
+ENV TZ=UTC
+
+# Install package from source code, compile translations
+RUN ./venv/bin/pip install Babel==2.12.1 && ./venv/bin/python scripts/compile_locales.py \
+  && ./venv/bin/pip install torch --extra-index-url https://download.pytorch.org/whl/cpu \
+  && ./venv/bin/pip install . \
+  && ./venv/bin/pip cache purge
+
+
+#COPY . .
+
+#FROM python:3.10.10-slim-bullseye
+
+ARG with_models=false
+ARG models=""
+
+RUN /usr/sbin/groupadd --system --gid 532 libretranslate && /usr/sbin/useradd --system --uid 532 --gid 532 libretranslate && mkdir -p /home/libretranslate/.local && chown -R libretranslate:libretranslate /home/libretranslate/.local
+#USER libretranslate
+
+#COPY --from=builder --chown=532:532 /app /app
+
+#RUN chown 532:532 /app
+
+#WORKDIR /app
+
+RUN if [ "$with_models" = "true" ]; then  \
+  # initialize the language models
+  if [ ! -z "$models" ]; then \
+  ./venv/bin/python scripts/install_models.py --load_only_lang_codes "$models";   \
+  else \
+  ./venv/bin/python scripts/install_models.py;  \
+  fi \
+  fi
+
+#RUN (./venv/bin/libretranslate --port 1 || echo "Initiated!")
+
+EXPOSE 8080
+
+#LAMBDA
+RUN ./venv/bin/pip install awslambdaric boto3
+
+RUN mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie
+
+ADD lambda lambda
+ADD lambda/lambda_function.py lambda_function.py
+RUN chmod +x lambda/entry_script.sh
+
+ENTRYPOINT [ "lambda/entry_script.sh" ]
+CMD [ "lambda_function.handler" ]
