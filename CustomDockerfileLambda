@@ -1,5 +1,5 @@
 #Lambda base image Amazon linux https://aws.amazon.com/blogs/compute/building-php-lambda-functions-with-docker-container-images/
-FROM public.ecr.aws/lambda/provided:al2023 as builder
+FROM public.ecr.aws/lambda/provided:al2023
 
 
 WORKDIR /app
@@ -66,7 +66,7 @@ EXPOSE 8080
 #LAMBDA
 RUN ./venv/bin/pip install awslambdaric boto3
 
-RUN mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie
+#RUN mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie
 
 ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
