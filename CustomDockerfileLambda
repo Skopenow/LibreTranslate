@@ -1,4 +1,5 @@
-#Lambda base image Amazon linux https://aws.amazon.com/blogs/compute/building-php-lambda-functions-with-docker-container-images/
+#docker build -f CustomDockerfileLambda -t test . --progress=plain --build-arg with_models=true --build-arg models=en,ar && docker run --rm -p 9000:8080 test
+
 FROM public.ecr.aws/lambda/provided:al2023
 
 
@@ -66,7 +67,10 @@ EXPOSE 8080
 #LAMBDA
 RUN ./venv/bin/pip install awslambdaric boto3
 
-#RUN mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie
+ARG with_rie=false
+RUN if [ "$with_rie" = "true" ]; then  \
+  (mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie)   \
+  fi
 
 ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
