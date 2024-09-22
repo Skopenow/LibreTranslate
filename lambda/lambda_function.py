@@ -35,3 +35,6 @@ def handler(event, context):
     response_json = json.loads(response.data)
 
     return response.data
+
+if __name__ == "__main__":
+    print(handler({"q": "Hello","source": "en","target": "ar","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}, {}))

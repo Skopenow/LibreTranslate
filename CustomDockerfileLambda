@@ -72,5 +72,7 @@ ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
 RUN chmod +x lambda/entry_script.sh
 
+RUN /app/venv/bin/python /app/lambda_function.py
+
 ENTRYPOINT [ "lambda/entry_script.sh" ]
 CMD [ "lambda_function.handler" ]
