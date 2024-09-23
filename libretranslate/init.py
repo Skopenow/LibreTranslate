@@ -48,6 +48,9 @@ def check_and_install_models(force=False, load_only_lang_codes=None,update=False
 
         # Download and install all available packages
         for available_package in available_packages:
+            if (available_package.to_code != "en"):
+                continue
+
             update = False
             if not force:
                 for pack in installed_packages:
