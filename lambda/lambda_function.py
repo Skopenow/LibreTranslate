@@ -38,4 +38,4 @@ def handler(event, context):
     return response.data
 
 if __name__ == "__main__":
-    print(handler({"q": "Hello","source": "en","target": "ar","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}, {}))
+    print(handler({"q": "bonjour","source": "fr","target": "en","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}, {}))
