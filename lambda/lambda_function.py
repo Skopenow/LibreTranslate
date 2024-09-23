@@ -31,11 +31,11 @@ app.config["SESSION_FILE_DIR"] = "/tmp"
 client = app.test_client()
 
 def handler(event, context):
-    response = client.post("/translate", data=event)
+    response = client.post(event['route'], data=event['data'])
 
     response_json = json.loads(response.data)
 
     return response.data
 
 if __name__ == "__main__":
-    print(handler({"q": "bonjour","source": "fr","target": "en","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}, {}))
+    print(handler({"route": "/translate", "data":{"q": "bonjour","source": "fr","target": "en","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}}, {}))

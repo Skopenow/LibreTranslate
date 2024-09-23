@@ -1,5 +1,5 @@
 #docker build -f CustomDockerfileLambda -t test . --progress=plain --build-arg with_models=true --build-arg models=en,ar --build-arg with_rie=true && docker run --rm -p 9000:8080 test
-#curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"q": "bonjour","source": "fr","target": "en","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}
+#curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"route": "/translate", "data":{"q": "bonjour","source": "fr","target": "en","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}}
 
 FROM public.ecr.aws/lambda/provided:al2023.2024.09.13.17 as builder
 
