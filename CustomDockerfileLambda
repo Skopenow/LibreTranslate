@@ -50,6 +50,10 @@ COPY --from=builder /app/venv/lib/python3.9/site-packages /var/lang/lib/python3.
 
 RUN cp -nr /var/lang/lib/python3.9/site-packages-build/* /var/lang/lib/python3.9/site-packages/ && rm -rf /var/lang/lib/python3.9/site-packages-build
 
+RUN yum update -y \
+  && yum install -y nano procps net-tools
+RUN sed -i -e 's#self._path = cache_dir#self._path = "/tmp"#g' /var/lang/lib/python3.9/site-packages/cachelib/file.py
+
 RUN if [ "$with_models" = "true" ]; then  \
   # initialize the language models
   if [ ! -z "$models" ]; then \
@@ -66,9 +70,6 @@ RUN if [ "$with_rie" = "true" ]; then  \
   (mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie)   \
   fi
 
-RUN yum update -y \
-  && yum install -y nano procps net-tools
-RUN sed -i -e 's#self._path = cache_dir#self._path = "/tmp"#g' /var/lang/lib/python3.9/site-packages/cachelib/file.py
 
 ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
