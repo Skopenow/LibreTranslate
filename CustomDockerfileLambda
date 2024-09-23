@@ -1,7 +1,7 @@
 #docker build -f CustomDockerfileLambda -t test . --progress=plain --build-arg with_models=true --build-arg models=en,ar --build-arg with_rie=true && docker run --rm -p 9000:8080 test
+#curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"q": "Hello","source": "en","target": "ar","format": "text","api_key": "Q5OayeSDEmxdxE4WVTqmVaAI2va3FVNT69bZM-Vgk-8tD20"}
 
-FROM public.ecr.aws/lambda/provided:al2023
-
+FROM public.ecr.aws/lambda/provided:al2023.2024.09.13.17 as builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN dnf update -y \
   && dnf install -y pkg-config gcc g++ nano procps net-tools
 
-RUN dnf install -y python3 python3-devel
+RUN dnf install -y python3-devel
 
 RUN python3 -mvenv venv && ./venv/bin/pip install --no-cache-dir --upgrade pip
 
@@ -34,18 +34,22 @@ RUN ./venv/bin/pip install Babel==2.12.1 && ./venv/bin/python scripts/compile_lo
   && ./venv/bin/pip install . \
   && ./venv/bin/pip cache purge
 
-
 #COPY . .
 
-#FROM python:3.10.10-slim-bullseye
+
+FROM public.ecr.aws/lambda/python:3.9
 
 ARG with_models=false
 ARG models=""
 
-RUN /usr/sbin/groupadd --system --gid 532 libretranslate && /usr/sbin/useradd --system --uid 532 --gid 532 libretranslate && mkdir -p /home/libretranslate/.local && chown -R libretranslate:libretranslate /home/libretranslate/.local
+#RUN /usr/sbin/groupadd --system --gid 532 libretranslate && /usr/sbin/useradd --system --uid 532 --gid 532 libretranslate && mkdir -p /home/libretranslate/.local && chown -R libretranslate:libretranslate /home/libretranslate/.local
 #USER libretranslate
 
-#COPY --from=builder --chown=532:532 /app /app
+COPY --from=builder /app ${LAMBDA_TASK_ROOT}
+
+RUN pip install --no-cache-dir --upgrade pip
+
+COPY --from=builder /app/venv/lib/python3.9/site-packages /var/lang/lib/python3.9/site-packages
 
 #RUN chown 532:532 /app
 
@@ -54,9 +58,9 @@ RUN /usr/sbin/groupadd --system --gid 532 libretranslate && /usr/sbin/useradd --
 RUN if [ "$with_models" = "true" ]; then  \
   # initialize the language models
   if [ ! -z "$models" ]; then \
-  ./venv/bin/python scripts/install_models.py --load_only_lang_codes "$models";   \
+  python3 scripts/install_models.py --load_only_lang_codes "$models";   \
   else \
-  ./venv/bin/python scripts/install_models.py;  \
+  python3 scripts/install_models.py;  \
   fi \
   fi
 
@@ -65,7 +69,7 @@ RUN if [ "$with_models" = "true" ]; then  \
 EXPOSE 8080
 
 #LAMBDA
-RUN ./venv/bin/pip install awslambdaric boto3
+#RUN ./venv/bin/pip install awslambdaric boto3
 
 ARG with_rie=false
 RUN if [ "$with_rie" = "true" ]; then  \
@@ -76,7 +80,7 @@ ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
 RUN chmod +x lambda/entry_script.sh
 
-RUN /app/venv/bin/python /app/lambda_function.py
+RUN python3 ${LAMBDA_TASK_ROOT}/lambda_function.py
 
-ENTRYPOINT [ "lambda/entry_script.sh" ]
+#ENTRYPOINT [ "lambda/entry_script.sh" ]
 CMD [ "lambda_function.handler" ]
