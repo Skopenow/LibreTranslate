@@ -55,7 +55,7 @@ RUN yum update -y \
 RUN sed -i -e 's#self._path = cache_dir#self._path = "/tmp"#g' /var/lang/lib/python3.9/site-packages/cachelib/file.py
 RUN sed -i -e 's/os.makedirs(/#os.makedirs(/g' /var/lang/lib/python3.9/site-packages/argostranslate/settings.py
 
-RUN mkdir -p /root/.local/share/argos-translate/packages /root/.local/cache/argos-translate
+RUN mkdir -p /root/.local/share/argos-translate/packages /root/.local/cache/argos-translate/downloads/
 RUN if [ "$with_models" = "true" ]; then  \
   # initialize the language models
   if [ ! -z "$models" ]; then \
