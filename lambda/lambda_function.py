@@ -24,9 +24,10 @@ args.req_flood_threshold = -1
 args.require_api_key_secret = False
 args.debug = True
 args.char_limit = -1
+args.threads = -1
 
 app = create_app(args)
-
+app.config["SESSION_FILE_DIR"] = "/tmp"
 client = app.test_client()
 
 def handler(event, context):

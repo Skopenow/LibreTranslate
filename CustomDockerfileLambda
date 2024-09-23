@@ -42,18 +42,13 @@ FROM public.ecr.aws/lambda/python:3.9
 ARG with_models=false
 ARG models=""
 
-#RUN /usr/sbin/groupadd --system --gid 532 libretranslate && /usr/sbin/useradd --system --uid 532 --gid 532 libretranslate && mkdir -p /home/libretranslate/.local && chown -R libretranslate:libretranslate /home/libretranslate/.local
-#USER libretranslate
-
 COPY --from=builder /app ${LAMBDA_TASK_ROOT}
 
 RUN pip install --no-cache-dir --upgrade pip
 
-COPY --from=builder /app/venv/lib/python3.9/site-packages /var/lang/lib/python3.9/site-packages
+COPY --from=builder /app/venv/lib/python3.9/site-packages /var/lang/lib/python3.9/site-packages-build
 
-#RUN chown 532:532 /app
-
-#WORKDIR /app
+RUN cp -nr /var/lang/lib/python3.9/site-packages-build/* /var/lang/lib/python3.9/site-packages/ && rm -rf /var/lang/lib/python3.9/site-packages-build
 
 RUN if [ "$with_models" = "true" ]; then  \
   # initialize the language models
@@ -64,23 +59,21 @@ RUN if [ "$with_models" = "true" ]; then  \
   fi \
   fi
 
-#RUN (./venv/bin/libretranslate --port 1 || echo "Initiated!")
-
 EXPOSE 8080
-
-#LAMBDA
-#RUN ./venv/bin/pip install awslambdaric boto3
 
 ARG with_rie=false
 RUN if [ "$with_rie" = "true" ]; then  \
   (mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie)   \
   fi
 
+RUN yum update -y \
+  && yum install -y nano procps net-tools
+RUN sed -i -e 's#self._path = cache_dir#self._path = "/tmp"#g' /var/lang/lib/python3.9/site-packages/cachelib/file.py
+
 ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
-RUN chmod +x lambda/entry_script.sh
+#RUN chmod +x lambda/entry_script.sh
 
 RUN python3 ${LAMBDA_TASK_ROOT}/lambda_function.py
 
-#ENTRYPOINT [ "lambda/entry_script.sh" ]
 CMD [ "lambda_function.handler" ]
