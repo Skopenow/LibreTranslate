@@ -60,9 +60,9 @@ RUN mkdir -p ${LAMBDA_TASK_ROOT}/.local/share/argos-translate/packages ${LAMBDA_
 RUN if [ "$with_models" = "true" ]; then  \
   # initialize the language models
   if [ ! -z "$models" ]; then \
-  XDG_DATA_HOME=${LAMBDA_TASK_ROOT}/.local/share python3 scripts/install_models.py --load_only_lang_codes "$models";   \
+  HOME=/var/task python3 scripts/install_models.py --load_only_lang_codes "$models";   \
   else \
-  XDG_DATA_HOME=${LAMBDA_TASK_ROOT}/.local/share python3 scripts/install_models.py;  \
+  HOME=/var/task python3 scripts/install_models.py;  \
   fi \
   fi
 
