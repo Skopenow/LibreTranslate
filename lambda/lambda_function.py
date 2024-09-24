@@ -25,6 +25,7 @@ args.require_api_key_secret = False
 args.debug = True
 args.char_limit = -1
 args.threads = -1
+args.batch_limit = -1
 
 app = create_app(args)
 app.config["SESSION_FILE_DIR"] = "/tmp"
@@ -56,7 +57,7 @@ def handler(event, context):
           "request": event
         }
 
-    response = client.post(route, data=data)
+    response = client.post(route, data=json.dumps(data), content_type='application/json')
 
     return response.data
 
