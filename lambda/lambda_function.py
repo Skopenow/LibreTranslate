@@ -31,9 +31,14 @@ app.config["SESSION_FILE_DIR"] = "/tmp"
 client = app.test_client()
 
 def handler(event, context):
-    response = client.post(event['route'], data=event['data'])
+    
+    if "route" not in event:
+        return {
+          "error": "Invalid request: missing route parameter",
+          "request": event
+        }
 
-    response_json = json.loads(response.data)
+    response = client.post(event['route'], data=event['data'])
 
     return response.data
 
