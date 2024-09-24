@@ -31,16 +31,32 @@ app.config["SESSION_FILE_DIR"] = "/tmp"
 client = app.test_client()
 
 def handler(event, context):
-    if "body" in event:
-        event = json.loads(event['body'])
-    
-    if "route" not in event:
+    route = ""
+    data = {}
+
+    if "rawPath" in event:
+        route = event['rawPath']
+        data = json.loads(event['body'])
+
+    if "route" in event:
+        route = event['route']
+
+    if "data" in event:
+        data = event['data']
+
+    if route == "":
         return {
           "error": "Invalid request: missing route parameter",
           "request": event
         }
 
-    response = client.post(event['route'], data=event['data'])
+    if data == {}:
+        return {
+          "error": "Invalid request: missing data parameter",
+          "request": event
+        }
+
+    response = client.post(route, data=data)
 
     return response.data
 
