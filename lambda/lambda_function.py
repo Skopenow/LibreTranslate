@@ -31,6 +31,8 @@ app.config["SESSION_FILE_DIR"] = "/tmp"
 client = app.test_client()
 
 def handler(event, context):
+    if "body" in event:
+        event = json.loads(event['body'])
     
     if "route" not in event:
         return {
