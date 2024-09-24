@@ -39,19 +39,18 @@ RUN ./venv/bin/pip install Babel==2.12.1 && ./venv/bin/python scripts/compile_lo
 
 FROM public.ecr.aws/lambda/python:3.9
 
+RUN yum update -y \
+  && yum install -y nano procps net-tools
+RUN pip install --no-cache-dir --upgrade pip
+
 ARG with_models=false
 ARG models=""
 
 COPY --from=builder /app ${LAMBDA_TASK_ROOT}
-
-RUN pip install --no-cache-dir --upgrade pip
-
 COPY --from=builder /app/venv/lib/python3.9/site-packages /var/lang/lib/python3.9/site-packages-build
 
 RUN cp -nr /var/lang/lib/python3.9/site-packages-build/* /var/lang/lib/python3.9/site-packages/ && rm -rf /var/lang/lib/python3.9/site-packages-build
 
-RUN yum update -y \
-  && yum install -y nano procps net-tools
 RUN sed -i -e 's#self._path = cache_dir#self._path = "/tmp"#g' /var/lang/lib/python3.9/site-packages/cachelib/file.py
 RUN sed -i -e 's/os.makedirs(/#os.makedirs(/g' /var/lang/lib/python3.9/site-packages/argostranslate/settings.py
 
@@ -67,12 +66,6 @@ RUN if [ "$with_models" = "true" ]; then  \
   fi
 
 EXPOSE 8080
-
-ARG with_rie=false
-RUN if [ "$with_rie" = "true" ]; then  \
-  (mkdir -p ~/.aws-lambda-rie && curl -Lo ~/.aws-lambda-rie/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie && chmod +x ~/.aws-lambda-rie/aws-lambda-rie)   \
-  fi
-
 
 ADD lambda lambda
 ADD lambda/lambda_function.py lambda_function.py
