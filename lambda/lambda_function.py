@@ -142,7 +142,10 @@ def handler(event, context):
                     except:
                         True
 
-            if (data["meta"]["update_opensearch"]):
+            if os.environ.get("DEBUG_MODE","0") == "1":
+                print("Attributes:", json.dumps(attributes))
+
+            if (attributes["main"] and data["meta"]["update_opensearch"]):
                 query = {
                     'size': 1,
                     'query': {
@@ -264,7 +267,7 @@ def handler(event, context):
                     raise e
                     print("Search query failed!", e)
 
-            if (data["meta"]["publish_to_socket"]):
+            if (attributes["main"] and data["meta"]["publish_to_socket"]):
                 socket_entry = {
                     "key": entry['key'],
                     "source_id": entry['source_id'],
