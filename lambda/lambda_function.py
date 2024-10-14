@@ -264,7 +264,8 @@ def handler(event, context):
                             }
                         )
                 except Exception as e:
-                    raise e
+                    if os.environ.get("TEST_MODE","0") == "0":
+                        raise e
                     print("Search query failed!", e)
 
             if (attributes["main"] and data["meta"]["publish_to_socket"]):
