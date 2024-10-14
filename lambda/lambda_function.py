@@ -71,7 +71,7 @@ def handler(event, context):
     if os.environ.get("TEST_MODE","0") == "1":
         translation_result = {
             b"translatedText": [
-                b"<name_en>Translated Title 1</name_en><description_en>Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
+                b"<name_en>Translated Title 1</name_en><description_en>HELLO Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
             ]
         }
     else:
@@ -282,10 +282,8 @@ def handler(event, context):
 
         if socket_entries:
             socket_message = {
-                "translatedData": {
-                    "need_to_push": True,
-                    "phrases": socket_entries
-                }
+                "need_to_push": True,
+                "phrases": socket_entries
             }
             url = os.environ[data["meta"]["stage_version"] + '_GRID_SOCKET_SERVER_URL'] + "data-to-all-subs"
             headers = {"Content-Type": "application/json"}
