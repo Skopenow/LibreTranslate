@@ -69,11 +69,11 @@ def handler(event, context):
         }
 
     if os.environ.get("TEST_MODE","0") == "1":
-        translation_result = {
-            b"translatedText": [
-                b"<name_en>Translated Title 1</name_en><description_en>HELLO Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
+        translation_result = json.dumps({
+            "translatedText": [
+                "<name_en>Translated Title 1</name_en><description_en>HELLO Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
             ]
-        }
+        })
     else:
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
@@ -81,7 +81,10 @@ def handler(event, context):
     if os.environ.get("DEBUG_MODE","0") == "1":
         print("Translation result:", translation_result)
 
-    if (b"translatedText" in translation_result and "meta" in data):
+    translation_result = translation_result.decode("utf-8")
+    translation_result = json.loads(translation_result)
+
+    if ("translatedText" in translation_result and "meta" in data):
         sources_types = {
             1: "grid_event",
             2: "grid_object",
@@ -103,7 +106,7 @@ def handler(event, context):
                     timeout=300,
                     http_compress=True
                 )
-        translations = translation_result[b"translatedText"]
+        translations = translation_result["translatedText"]
         if (type(translations) == str):
             translations = [translations]
 
@@ -112,7 +115,7 @@ def handler(event, context):
         socket_entries = []
 
         for entry_index, entry in enumerate(data["meta"]["entries"]):
-            translation = translations[entry_index].decode("utf-8")
+            translation = translations[entry_index]
             translation = re.sub(r'<refid .+</refid>', '', translation)
             translation = re.sub(r'<tht0 id="', '', translation)
             translation = re.sub(r'"></tht0>', '', translation)
