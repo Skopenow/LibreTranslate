@@ -41,7 +41,7 @@ FROM public.ecr.aws/lambda/python:3.9
 
 RUN yum update -y \
   && yum install -y nano procps net-tools
-RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip boto3 opensearch-py pytz requests
 
 ARG with_models=false
 ARG models=""
