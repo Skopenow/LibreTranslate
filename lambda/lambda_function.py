@@ -169,7 +169,10 @@ def handler(event, context):
                 try:
                     item_data = item_response["hits"]["hits"][0]["_source"]
                     record = json.loads(item_data["record"])
-                    extra = json.loads(item_data["extra"])
+                    try:
+                        extra = json.loads(item_data["extra"])
+                    except:
+                        extra = {}
 
                     record['translated'] = True
 
@@ -185,7 +188,12 @@ def handler(event, context):
                     try:
                         item_hits_data = item_hits_response["hits"]["hits"][0]["_source"]
                         hits_record = json.loads(item_hits_data["record"])
-                        hits_extra = json.loads(item_hits_data["extra"])
+
+                        try:
+                            hits_extra = json.loads(item_hits_data["extra"])
+                        except:
+                            hits_extra = {}
+                        
 
                         hits_record['translated'] = True
 
