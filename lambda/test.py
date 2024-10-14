@@ -1,5 +1,6 @@
 import os
 os.environ["TEST_MODE"] = "1"
+os.environ["DEBUG_MODE"] = "1"
 os.environ["D_OPENSEARCH_HOST"] = "https://search-grid-vns6gxthsisbmvi6eajqf47cfa.us-west-2.es.amazonaws.com:443"
 os.environ["D_OPENSEARCH_PASS"] = "5qv%_k!pE6"
 os.environ["D_OPENSEARCH_USER"] = "root"
@@ -23,11 +24,11 @@ print(handler({
             "meta": {
                 "stage_version": "D",
                 "publish_to_socket": 1,
-                "update_opensearch": 0,
+                "update_opensearch": 1,
 
                 "entries": [
                     {
-                        "source_id": 13,
+                        "source_id": 75,
                         "source_type": 4,
                         "key": "a29cb4c0f85ad962c58342ffbe9774db",
                         "attributes": {

@@ -70,7 +70,7 @@ def handler(event, context):
 
     if os.environ.get("TEST_MODE","0") == "1":
         translation_result = {
-            b"translatedText": [
+            "translatedText": [
                 b"<name_en>Translated Title 1</name_en><description_en>HELLO Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
             ]
         }
@@ -78,7 +78,7 @@ def handler(event, context):
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
 
-    if (b"translatedText" in translation_result and "meta" in data):
+    if ("translatedText" in translation_result and "meta" in data):
         sources_types = {
             1: "grid_event",
             2: "grid_object",
@@ -100,7 +100,7 @@ def handler(event, context):
                     timeout=300,
                     http_compress=True
                 )
-        translations = translation_result[b"translatedText"]
+        translations = translation_result["translatedText"]
         if (type(translations) == str):
             translations = [translations]
 
@@ -265,18 +265,18 @@ def handler(event, context):
 
 
         if bulk_query:
-            if os.environ.get("TEST_MODE","0") == "1":
+            if os.environ.get("DEBUG_MODE","0") == "1":
                 print("Bulk Query:", json.dumps(bulk_query))
             os_response = os_client.bulk(body=bulk_query)
-            if os.environ.get("TEST_MODE","0") == "1":
+            if os.environ.get("DEBUG_MODE","0") == "1":
                 print(os_response)
                 print("")
 
             for os_query in update_by_query:
-                if os.environ.get("TEST_MODE","0") == "1":
+                if os.environ.get("DEBUG_MODE","0") == "1":
                     print("Update Query:", json.dumps(os_query))
                 os_response = os_client.update_by_query(body=os_query["body"],index=os_query["index"])
-                if os.environ.get("TEST_MODE","0") == "1":
+                if os.environ.get("DEBUG_MODE","0") == "1":
                     print(os_response)
                     print("")
 
@@ -287,7 +287,7 @@ def handler(event, context):
             }
             url = os.environ[data["meta"]["stage_version"] + '_GRID_SOCKET_SERVER_URL'] + "data-to-all-subs"
             headers = {"Content-Type": "application/json"}
-            if os.environ.get("TEST_MODE","0") == "1":
+            if os.environ.get("DEBUG_MODE","0") == "1":
                 print(url, headers, json.dumps(socket_message, indent=2))
             response = requests.post(url, headers=headers, json=socket_message)
 
