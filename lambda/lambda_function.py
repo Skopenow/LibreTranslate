@@ -78,6 +78,9 @@ def handler(event, context):
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
 
+    if os.environ.get("DEBUG_MODE","0") == "1":
+        print("Translation result:", translation_result)
+
     if (b"translatedText" in translation_result and "meta" in data):
         sources_types = {
             1: "grid_event",
