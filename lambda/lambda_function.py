@@ -75,6 +75,9 @@ def handler(event, context):
             ]
         }))
     else:
+        if os.environ.get("DEBUG_MODE","0") == "1":
+            print("Translation input:", data)
+
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
 
