@@ -136,7 +136,7 @@ def handler(event, context):
             for attributes_group in entry["attributes"]:
                 for attribute in entry["attributes"][attributes_group]:
                     try:
-                        attribute_value = re.compile(f'<{attribute}>(.*?)</{attribute}>').search(translation).group(1)
+                        attribute_value = re.compile(f'<{attribute}>(.*?)</{attribute}>',re.S).search(translation).group(1)
                         attributes[attributes_group][attribute] = attribute_value
                         translated_attributes[attributes_group][attribute.replace("_en","")] = attribute_value
                     except:
