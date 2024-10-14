@@ -69,11 +69,11 @@ def handler(event, context):
         }
 
     if os.environ.get("TEST_MODE","0") == "1":
-        translation_result = json.dumps({
+        translation_result = str.encode(json.dumps({
             "translatedText": [
                 "<name_en>Translated Title 1</name_en><description_en>HELLO Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
             ]
-        })
+        }))
     else:
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
@@ -81,7 +81,7 @@ def handler(event, context):
     if os.environ.get("DEBUG_MODE","0") == "1":
         print("Translation result:", translation_result)
 
-    translation_result = translation_result.decode("utf-8")
+    translation_result = str(translation_result,"utf-8")
     translation_result = json.loads(translation_result)
 
     if ("translatedText" in translation_result and "meta" in data):
