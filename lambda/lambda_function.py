@@ -76,7 +76,7 @@ def handler(event, context):
         }))
     else:
         if os.environ.get("DEBUG_MODE","0") == "1":
-            print("Translation input:", data)
+            print("Translation input:", json.dumps(data))
 
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
@@ -285,7 +285,7 @@ def handler(event, context):
             url = os.environ[data["meta"]["stage_version"] + '_GRID_SOCKET_SERVER_URL'] + "data-to-all-subs"
             headers = {"Content-Type": "application/json"}
             if os.environ.get("DEBUG_MODE","0") == "1":
-                print(url, headers, json.dumps(socket_message, indent=2))
+                print(url, json.dumps(headers), json.dumps(socket_message))
             response = requests.post(url, headers=headers, json=socket_message)
 
         if bulk_query:
