@@ -165,6 +165,8 @@ def handler(event, context):
                     record = json.loads(item_data["record"])
                     extra = json.loads(item_data["extra"])
 
+                    record['translated'] = True
+
                     bookmarks_record = record | attributes["bookmarks"]
                     bookmarks_extra = extra | attributes["bookmarks"]
                     bookmarks_record["extra"] = bookmarks_extra
@@ -178,6 +180,8 @@ def handler(event, context):
                         item_hits_data = item_hits_response["hits"]["hits"][0]["_source"]
                         hits_record = json.loads(item_hits_data["record"])
                         hits_extra = json.loads(item_hits_data["extra"])
+
+                        hits_record['translated'] = True
 
                         hits_record = hits_record | attributes["alert_hits"]
                         hits_extra = hits_extra | attributes["alert_hits"]
