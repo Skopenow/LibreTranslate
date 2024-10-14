@@ -277,6 +277,17 @@ def handler(event, context):
                 socket_entries.append(socket_entry)
 
 
+        if socket_entries:
+            socket_message = {
+                "need_to_push": True,
+                "phrases": socket_entries
+            }
+            url = os.environ[data["meta"]["stage_version"] + '_GRID_SOCKET_SERVER_URL'] + "data-to-all-subs"
+            headers = {"Content-Type": "application/json"}
+            if os.environ.get("DEBUG_MODE","0") == "1":
+                print(url, headers, json.dumps(socket_message, indent=2))
+            response = requests.post(url, headers=headers, json=socket_message)
+
         if bulk_query:
             if os.environ.get("DEBUG_MODE","0") == "1":
                 print("Bulk Query:", json.dumps(bulk_query))
@@ -292,17 +303,6 @@ def handler(event, context):
                 if os.environ.get("DEBUG_MODE","0") == "1":
                     print(os_response)
                     print("")
-
-        if socket_entries:
-            socket_message = {
-                "need_to_push": True,
-                "phrases": socket_entries
-            }
-            url = os.environ[data["meta"]["stage_version"] + '_GRID_SOCKET_SERVER_URL'] + "data-to-all-subs"
-            headers = {"Content-Type": "application/json"}
-            if os.environ.get("DEBUG_MODE","0") == "1":
-                print(url, headers, json.dumps(socket_message, indent=2))
-            response = requests.post(url, headers=headers, json=socket_message)
 
     return translation_result
 
