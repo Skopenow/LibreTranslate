@@ -70,7 +70,7 @@ def handler(event, context):
 
     if os.environ.get("TEST_MODE","0") == "1":
         translation_result = {
-            "translatedText": [
+            b"translatedText": [
                 b"<name_en>Translated Title 1</name_en><description_en>HELLO Translated Description 1 <tht0 id=\"@channel\"></tht0></description_en><refid id=\"1\"></refid>"
             ]
         }
@@ -78,7 +78,7 @@ def handler(event, context):
         response = test_client.post(route, data=json.dumps(data), content_type='application/json')
         translation_result = response.data
 
-    if ("translatedText" in translation_result and "meta" in data):
+    if (b"translatedText" in translation_result and "meta" in data):
         sources_types = {
             1: "grid_event",
             2: "grid_object",
@@ -100,7 +100,7 @@ def handler(event, context):
                     timeout=300,
                     http_compress=True
                 )
-        translations = translation_result["translatedText"]
+        translations = translation_result[b"translatedText"]
         if (type(translations) == str):
             translations = [translations]
 
